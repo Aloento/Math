@@ -1,5 +1,4 @@
 export default [
-  { path: '/welcome', name: '欢迎', icon: 'smile', component: './Welcome' },
-  { path: '/', redirect: '/welcome' },
-  { component: './404' },
+  { path: "/", name: "欢迎", icon: "smile", component: "./" },
+  { component: "./404" },
 ];
