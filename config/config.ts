@@ -11,7 +11,6 @@ export default defineConfig({
     // https://umijs.org/zh-CN/plugins/plugin-layout
     locale: false,
     siderWidth: 208,
-    headerRender: false,
     ...defaultSettings,
   },
   dynamicImport: {
