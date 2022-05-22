@@ -47,16 +47,21 @@ export default function CholeskyDecomposition() {
   const lvarMatrix = useRef<HTMLTableElement>(null);
   const rowVarMatrix = useRef<HTMLTableElement>(null);
   const compLMatrix = useRef<HTMLTableElement>(null);
-  const expComMatrix = useRef<HTMLTableElement>(null);
+  const expMatrix = useRef<HTMLTableElement>(null);
   useEffect(() => {
     lvarMatrix.current?.setAttribute("border", "1");
     rowVarMatrix.current?.setAttribute("border", "1");
     compLMatrix.current?.setAttribute("border", "1");
-    expComMatrix.current?.setAttribute("border", "1");
+    expMatrix.current?.setAttribute("border", "1");
   }, [rawMatrix, rowVarMatrix]);
+
 
   function MakeLVarMatrix() {
     const matrix: JSX.Element[] = [];
+    const nums: number[] = [];
+
+    for (let i = 0; i < squNum * squNum; i++)
+      nums.push(i + 1);
 
     for (let r = 0; r < squNum; r++) {
       const row: JSX.Element[] = [];
@@ -64,7 +69,9 @@ export default function CholeskyDecomposition() {
       for (let c = 0; c < squNum; c++) {
         row.push(
           <td key={`${r}-${c}`}>
-            {c <= r ? `L${r + 1}${c + 1}` : 0}
+            {function () {
+              return c <= r ? `L${nums.shift()}` : 0;
+            }()}
           </td>
         );
       }
@@ -99,8 +106,22 @@ export default function CholeskyDecomposition() {
     </table>
   }
 
-  function MakeExpComMatrix() {
+  function MakeExpMatrix() {
     const matrix: JSX.Element[] = [];
+    const nums: number[] = [];
+    const vars: number[][] = [];
+
+    for (let i = 0; i < squNum * squNum; i++)
+      nums.push(i + 1);
+
+    for (let r = 0; r < squNum; r++) {
+      const row: number[] = [];
+
+      for (let c = 0; c < squNum; c++)
+        row.push(c <= r ? nums.shift()! : 0);
+
+      vars.push(row);
+    }
 
     for (let r = 0; r < squNum; r++) {
       const row: JSX.Element[] = [];
@@ -110,20 +131,18 @@ export default function CholeskyDecomposition() {
           <td key={`${r}-${c}`}>
             {function () {
               let exp = "";
+
+              if (r > c)
+                return exp;
+
               for (let i = 0; i < squNum; i++) {
-                if (c > r) {
-                  exp = "0";
-                  continue;
+                if (vars[r][i] !== 0 && vars[c][i] !== 0) {
+                  exp += `L${vars[r][i]} * L${vars[c][i]}`;
+                  if (i < squNum - 1)
+                    exp += " + ";
                 }
 
-                let L = `L${r + 1}${i + 1}`;
-                if (i > r)
-                  L = `0`;
-
-                exp += `${L} * ${L}`;
-                if (i < squNum - 1)
-                  exp += " + ";
-                else
+                if (i >= squNum - 1)
                   exp += " = " + rawMatrix.at(r)?.at(c);
               }
 
@@ -136,7 +155,7 @@ export default function CholeskyDecomposition() {
       matrix.push(<tr key={r}>{row}</tr>);
     }
 
-    return <table ref={expComMatrix}>
+    return <table ref={expMatrix}>
       {matrix}
     </table>
   }
@@ -213,7 +232,7 @@ export default function CholeskyDecomposition() {
 
           <p>
             2, 计算L变量<br />
-            <MakeExpComMatrix />
+            <MakeExpMatrix />
             <MakeCompLMatrix />
           </p>
         </section>
