@@ -188,6 +188,17 @@ export default function CholeskyDecomposition() {
     </table>
   }
 
+  function cho() {
+    const res: number[][] = suppress(() => Cholesky(rawMatrix));
+    for (let i = 0; i < squNum; i++) {
+      for (let j = 0; j < squNum; j++) {
+        if (!res.at(i)?.at(j))
+          res[i][j] = 0;
+      }
+    }
+    return res;
+  }
+
   return (
     <PageContainer breadcrumbRender={false}>
       <div style={{
@@ -201,14 +212,7 @@ export default function CholeskyDecomposition() {
           alignItems: "center",
         }}>
           <InputNumber value={squNum} onChange={x => {
-            const newMatrix: number[][] = [];
-            for (let r = 0; r <= squNum; r++) {
-              newMatrix[r] = [];
-              for (let c = 0; c <= squNum; c++)
-                newMatrix[r][c] = 1;
-            }
-
-            setRawMatrix(newMatrix);
+            setRawMatrix(math.matrix(rawMatrix).resize([x, x]).toArray() as number[][]);
             return setSquNum(Number(x));
           }} />
         </div>
@@ -234,6 +238,13 @@ export default function CholeskyDecomposition() {
             2, 计算L变量<br />
             <MakeExpMatrix />
             <MakeCompLMatrix />
+          </p>
+
+          <p>
+            3, 计算行列式<br />
+            L 的行列式：{math.det(cho())} <br />
+            det LT = det L<br />
+            det A = (det L)^2 = {suppress(() => math.pow(math.det(cho()), 2))}
           </p>
         </section>
       </div>
