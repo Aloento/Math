@@ -53,8 +53,7 @@ export default function CholeskyDecomposition() {
     rowVarMatrix.current?.setAttribute("border", "1");
     compLMatrix.current?.setAttribute("border", "1");
     expMatrix.current?.setAttribute("border", "1");
-  }, [rawMatrix, rowVarMatrix]);
-
+  }, [lvarMatrix, rowVarMatrix, compLMatrix, expMatrix]);
 
   function MakeLVarMatrix() {
     const matrix: JSX.Element[] = [];
@@ -242,7 +241,7 @@ export default function CholeskyDecomposition() {
 
           <p>
             3, 计算行列式<br />
-            L 的行列式：{math.det(cho())} <br />
+            L 的行列式 对角线：{math.det(cho())} <br />
             det LT = det L<br />
             det A = (det L)^2 = {suppress(() => math.pow(math.det(cho()), 2))}
           </p>

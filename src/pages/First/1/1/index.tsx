@@ -180,7 +180,7 @@ export default function MachineNumber() {
         <section>
           <p>
             1, 检查范围<br />
-            M({digits}, {bottomExp}, {topExp}) 的 最大值是 {math.format(max)} 或 {`${max}`}<br />
+            M({digits}, {bottomExp}, {topExp}) 的 最大值是 {math.format(max)}<br />
             最小正数是 {math.format(min)}<br />
 
             {math.number(dec) >= 0 ? `${min} < ${dec} < ${max}` : `-${max} < ${dec} < -${min}`}<br />
