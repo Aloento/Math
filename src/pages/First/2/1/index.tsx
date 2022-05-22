@@ -1,10 +1,18 @@
+import Cholesky from "@/Cholesky";
+import { math } from "@/global";
+import { suppress } from "@/helpers";
 import { PageContainer } from "@ant-design/pro-components";
 import { Divider, InputNumber } from "antd";
 import { useEffect } from "react";
 import { useRef, useState } from "react";
 
 export default function CholeskyDecomposition() {
-  const [rawMatrix, setRawMatrix] = useState<number[][]>([]);
+  const [rawMatrix, setRawMatrix] = useState<number[][]>([
+    [4, 2, -2, 4],
+    [2, 10, 5, -1],
+    [-2, 5, 9, 0],
+    [4, -1, 0, 10]
+  ]);
   const [squNum, setSquNum] = useState(4);
 
   function MakeInputMatrix() {
@@ -29,8 +37,23 @@ export default function CholeskyDecomposition() {
       matrix.push(<tr key={r}>{row}</tr>);
     }
 
-    return <>{matrix}</>
+    return <table style={{
+      width: "fit-content",
+    }}>
+      {matrix}
+    </table>
   }
+
+  const lvarMatrix = useRef<HTMLTableElement>(null);
+  const rowVarMatrix = useRef<HTMLTableElement>(null);
+  const compLMatrix = useRef<HTMLTableElement>(null);
+  const expComMatrix = useRef<HTMLTableElement>(null);
+  useEffect(() => {
+    lvarMatrix.current?.setAttribute("border", "1");
+    rowVarMatrix.current?.setAttribute("border", "1");
+    compLMatrix.current?.setAttribute("border", "1");
+    expComMatrix.current?.setAttribute("border", "1");
+  }, [rawMatrix, rowVarMatrix]);
 
   function MakeLVarMatrix() {
     const matrix: JSX.Element[] = [];
@@ -49,7 +72,9 @@ export default function CholeskyDecomposition() {
       matrix.push(<tr key={r}>{row}</tr>);
     }
 
-    return <>{matrix}</>
+    return <table ref={lvarMatrix}>
+      {matrix}
+    </table>
   }
 
   function MakeRowVarMatrix() {
@@ -69,15 +94,80 @@ export default function CholeskyDecomposition() {
       matrix.push(<tr key={r}>{row}</tr>);
     }
 
-    return <>{matrix}</>
+    return <table ref={rowVarMatrix}>
+      {matrix}
+    </table>
   }
 
-  const lvarMatrix = useRef<HTMLTableElement>(null);
-  const rowVarMatrix = useRef<HTMLTableElement>(null);
-  useEffect(() => {
-    lvarMatrix.current?.setAttribute("border", "1");
-    rowVarMatrix.current?.setAttribute("border", "1");
-  }, [rawMatrix, rowVarMatrix]);
+  function MakeExpComMatrix() {
+    const matrix: JSX.Element[] = [];
+
+    for (let r = 0; r < squNum; r++) {
+      const row: JSX.Element[] = [];
+
+      for (let c = 0; c < squNum; c++) {
+        row.push(
+          <td key={`${r}-${c}`}>
+            {function () {
+              let exp = "";
+              for (let i = 0; i < squNum; i++) {
+                if (c > r) {
+                  exp = "0";
+                  continue;
+                }
+
+                let L = `L${r + 1}${i + 1}`;
+                if (i > r)
+                  L = `0`;
+
+                exp += `${L} * ${L}`;
+                if (i < squNum - 1)
+                  exp += " + ";
+                else
+                  exp += " = " + rawMatrix.at(r)?.at(c);
+              }
+
+              return exp;
+            }()}
+          </td>
+        );
+      }
+
+      matrix.push(<tr key={r}>{row}</tr>);
+    }
+
+    return <table ref={expComMatrix}>
+      {matrix}
+    </table>
+  }
+
+  function MakeCompLMatrix() {
+    const comp: number[][] = suppress(() => Cholesky(rawMatrix));
+    const matrix: JSX.Element[] = [];
+
+    for (let r = 0; r < squNum; r++) {
+      const row: JSX.Element[] = [];
+
+      for (let c = 0; c < squNum; c++) {
+        row.push(
+          <td key={`${r}-${c}`}>
+            {function () {
+              const num = comp?.at(r)?.at(c) || 0;
+              if (num % 1 === 0)
+                return num;
+              return suppress(() => math.format(math.fraction(num)))
+            }()}
+          </td>
+        );
+      }
+
+      matrix.push(<tr key={r}>{row}</tr>);
+    }
+
+    return <table ref={compLMatrix}>
+      {matrix}
+    </table>
+  }
 
   return (
     <PageContainer breadcrumbRender={false}>
@@ -91,7 +181,7 @@ export default function CholeskyDecomposition() {
           gap: "10px",
           alignItems: "center",
         }}>
-          <InputNumber placeholder={`${squNum}`} onChange={x => {
+          <InputNumber value={squNum} onChange={x => {
             const newMatrix: number[][] = [];
             for (let r = 0; r <= squNum; r++) {
               newMatrix[r] = [];
@@ -104,11 +194,7 @@ export default function CholeskyDecomposition() {
           }} />
         </div>
 
-        <table style={{
-          width: "fit-content",
-        }}>
-          <MakeInputMatrix />
-        </table>
+        <MakeInputMatrix />
 
         <Divider style={{ margin: "unset" }} />
 
@@ -120,19 +206,15 @@ export default function CholeskyDecomposition() {
               display: "flex",
               gap: "10px",
             }}>
-              <table ref={lvarMatrix}>
-                <MakeLVarMatrix />
-              </table>
-
-              <table ref={rowVarMatrix}>
-                <MakeRowVarMatrix />
-              </table>
+              <MakeLVarMatrix />
+              <MakeRowVarMatrix />
             </div>
           </p>
 
           <p>
             2, 计算L变量<br />
-
+            <MakeExpComMatrix />
+            <MakeCompLMatrix />
           </p>
         </section>
       </div>

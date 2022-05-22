@@ -3,7 +3,7 @@
  * @returns triangular matrix
  */
 export default function Cholesky(matrix: number[][]): number[][] {
-  let len = matrix.length, res = Array(len)
+  const len = matrix.length, res: number[][] = Array(len)
   if (matrix.length !== matrix[len - 1].length)
     throw Error('Input matrix must be square or lower triangle')
 
