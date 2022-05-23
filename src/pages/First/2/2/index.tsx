@@ -1,6 +1,7 @@
 import { math } from "@/global";
 import { suppress } from "@/helpers";
 import luDecomposition from "@/LU";
+import MakeMatrix from "@/ShowMatrix";
 import { PageContainer } from "@ant-design/pro-components";
 import { Divider, InputNumber } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -88,62 +89,6 @@ export default function LUDecomposition() {
     return <table style={{
       width: "fit-content",
     }}>
-      {matrix}
-    </table>
-  }
-
-  function MakeLMatrix() {
-    const refLMatrix = useRef<HTMLTableElement>(null);
-
-    useEffect(() => {
-      refLMatrix.current?.setAttribute("border", "1");
-    }, [refLMatrix]);
-
-    const matrix: JSX.Element[] = [];
-
-    for (let row = 0; row < squNum; row++) {
-      const rowData: JSX.Element[] = [];
-
-      for (let col = 0; col < squNum; col++) {
-        rowData.push(
-          <td key={`${row}-${col}`}>
-            {LMatrix?.at(row)?.at(col)}
-          </td>
-        );
-      }
-
-      matrix.push(<tr key={row}>{rowData}</tr>);
-    }
-
-    return <table ref={refLMatrix}>
-      {matrix}
-    </table>
-  }
-
-  function MakeUMatrix() {
-    const refUMatrix = useRef<HTMLTableElement>(null);
-
-    useEffect(() => {
-      refUMatrix.current?.setAttribute("border", "1");
-    }, [refUMatrix]);
-
-    const matrix: JSX.Element[] = [];
-
-    for (let row = 0; row < squNum; row++) {
-      const rowData: JSX.Element[] = [];
-
-      for (let col = 0; col < squNum; col++) {
-        rowData.push(
-          <td key={`${row}-${col}`}>
-            {UMatrix?.at(row)?.at(col)}
-          </td>
-        );
-      }
-
-      matrix.push(<tr key={row}>{rowData}</tr>);
-    }
-
-    return <table ref={refUMatrix}>
       {matrix}
     </table>
   }
@@ -243,7 +188,13 @@ export default function LUDecomposition() {
       for (let col = 0; col < squNum; col++) {
         rowData.push(
           <td key={`${row}-${col}`}>
-            {math.format(math.fraction(ResMatrix?.lower?.at(row)?.at(col) ?? null!))}
+            {function () {
+              const n = ResMatrix?.lower?.at(row)?.at(col) ?? null!;
+              if (n % 1 === 0)
+                return n;
+
+              return suppress(() => math.format(math.fraction(n)));
+            }()}
           </td>
         );
       }
@@ -273,11 +224,10 @@ export default function LUDecomposition() {
           <td key={`${row}-${col}`}>
             {function () {
               const n = ResMatrix?.upper?.at(row)?.at(col) ?? null!;
-              if (n % 1 === 0) {
+              if (n % 1 === 0)
                 return n;
-              }
 
-              return math.format(math.fraction(n));
+              return suppress(() => math.format(math.fraction(n)));
             }()}
           </td>
         );
@@ -298,16 +248,10 @@ export default function LUDecomposition() {
         gap: '12px',
         flexDirection: 'column',
       }}>
-        <div style={{
-          display: "flex",
-          gap: "10px",
-          alignItems: "center",
-        }}>
-          <InputNumber value={squNum} onChange={x => {
-            setRawMatrix(math.matrix(rawMatrix).resize([x, x]).toArray() as number[][]);
-            return setSquNum(Number(x));
-          }} />
-        </div>
+        <InputNumber value={squNum} onChange={x => {
+          setRawMatrix(math.matrix(rawMatrix).resize([x, x]).toArray() as number[][]);
+          return setSquNum(Number(x));
+        }} />
 
         <MakeInputMatrix />
 
@@ -317,13 +261,13 @@ export default function LUDecomposition() {
           <p>
             1, 列出 L U 和原始矩阵<br />
 
-            <MakeUMatrix /> <br />
+            <MakeMatrix matrix={LMatrix} squ={squNum} /> <br />
             <div style={{
               display: "flex",
               gap: "10px",
             }}>
               <MakeRawMatrix />
-              <MakeLMatrix />
+              <MakeMatrix matrix={UMatrix} squ={squNum} />
             </div>
           </p>
 
