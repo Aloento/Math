@@ -8,7 +8,7 @@ import { suppress } from "@/helpers";
 import MakeMatrix from "@/ShowMatrix";
 import err from "./err.png";
 
-export default function JacobiIteration() {
+export default function GaussSeidel() {
   const [squNum, setSquNum] = useState(3);
   const [tol, setTol] = useState<Fraction>(math.evaluate("10^-2"));
 
@@ -76,40 +76,39 @@ export default function JacobiIteration() {
   const [DMatrix, setDMatrix] = useState<number[][]>([]);
   const [UMatrix, setUMatrix] = useState<number[][]>([]);
 
-  const [DIMatrix, setDIMatrix] = useState<number[][]>([]);
-  const [LUMatrix, setLUMatrix] = useState<number[][]>([]);
-  const [BjMatrix, setBjMatrix] = useState<number[][]>([]);
-  const [CjMatrix, setCjMatrix] = useState<number[][]>([]);
+  const [LDMatrix, setLDMatrix] = useState<number[][]>([]);
+  const [LD1Matrix, setLD1Matrix] = useState<number[][]>([]);
+
+  const [BsMatrix, setBsMatrix] = useState<number[][]>([]);
+  const [CsMatrix, setCsMatrix] = useState<number[][]>([]);
 
   useEffect(() => {
     const lMatrix: number[][] = [];
     const dMatrix: number[][] = [];
     const uMatrix: number[][] = [];
 
-    const dlMatrix: number[][] = [];
-    const luMatrix: number[][] = [];
+    const ldMatrix: number[][] = [];
+
 
     for (let row = 0; row < squNum; row++) {
       lMatrix.push([]);
       dMatrix.push([]);
       uMatrix.push([]);
 
-      dlMatrix.push([]);
-      luMatrix.push([]);
+      ldMatrix.push([]);
 
       for (let col = 0; col < squNum; col++) {
         const n = AMatrix.at(row)?.at(col)!;
 
         if (row > col) {
-          lMatrix[row][col] = luMatrix[row][col] = n;
-          dMatrix[row][col] = dlMatrix[row][col] = uMatrix[row][col] = 0;
+          lMatrix[row][col] = ldMatrix[row][col] = n;
+          dMatrix[row][col] = uMatrix[row][col] = 0;
         } else if (row === col) {
-          lMatrix[row][col] = uMatrix[row][col] = luMatrix[row][col] = 0;
-          dMatrix[row][col] = n;
-          dlMatrix[row][col] = suppress(() => math.chain(n).pow(-1).done());
+          lMatrix[row][col] = uMatrix[row][col] = 0;
+          dMatrix[row][col] = ldMatrix[row][col] = n;
         } else {
-          lMatrix[row][col] = dMatrix[row][col] = dlMatrix[row][col] = 0;
-          uMatrix[row][col] = luMatrix[row][col] = n;
+          lMatrix[row][col] = dMatrix[row][col] = ldMatrix[row][col] = 0;
+          uMatrix[row][col] = n;
         }
       }
     }
@@ -118,25 +117,27 @@ export default function JacobiIteration() {
     setDMatrix(dMatrix);
     setUMatrix(uMatrix);
 
-    setDIMatrix(dlMatrix);
-    setLUMatrix(luMatrix);
+    setLDMatrix(ldMatrix);
 
-    setBjMatrix(suppress(() => math.chain(-1).multiply(dlMatrix).multiply(luMatrix).done()));
-    setCjMatrix(suppress(() => math.chain(dlMatrix).multiply(BMatrix).done()));
+    const ld1Matrix: number[][] = suppress(() => math.inv(ldMatrix));
+    setLD1Matrix(ld1Matrix);
+
+    setBsMatrix(suppress(() => math.chain(-1).multiply(ld1Matrix).multiply(uMatrix).done()));
+    setCsMatrix(suppress(() => math.chain(ld1Matrix).multiply(BMatrix).done()));
   }, [AMatrix, BMatrix]);
 
-  const [BjNorm, setBjNorm] = useState("");
-  const [CjNorm, setCjNorm] = useState("");
+  const [BsNorm, setBsNorm] = useState("");
+  const [CsNorm, setCsNorm] = useState("");
 
   useEffect(() => {
-    setBjNorm(suppress(() => math.format(math.fraction(math.norm(BjMatrix, 1)))));
-    setCjNorm(suppress(() => math.format(math.fraction(math.norm(CjMatrix, 1)))));
-  }, [BjMatrix, CjMatrix]);
+    setBsNorm(suppress(() => math.format(math.fraction(math.norm(BsMatrix, Infinity)))));
+    setCsNorm(suppress(() => math.format(math.fraction(math.norm(CsMatrix, Infinity)))));
+  }, [BsMatrix, CsMatrix]);
 
   const [exp, setExp] = useState("");
   useEffect(() => {
-    setExp(`(((${BjNorm}) ^ k) / (${suppress(() => math.format(math.subtract(1, math.fraction(BjNorm))))})) * ${CjNorm} ${"<"} ${math.format(tol)}`);
-  }, [BjNorm, CjNorm, tol]);
+    setExp(`(((${BsNorm}) ^ k) / (${suppress(() => math.format(math.subtract(1, math.fraction(BsNorm))))})) * ${CsNorm} ${"<"} ${math.format(tol)}`);
+  }, [BsNorm, CsNorm, tol]);
 
   return (
     <PageContainer breadcrumbRender={false}>
@@ -169,32 +170,35 @@ export default function JacobiIteration() {
           </p>
 
           <p>
-            2, 公式<br />
+            2, 用Gaussian elimination 计算 L + D 的 invertate<br />
+            <a href={`https://www.wolframalpha.com/input?i=Inverse matrix ${suppress(() => math.format(LDMatrix))}`}
+              target="_blank" children={`Inverse matrix ${suppress(() => math.format(LDMatrix))}`} />
+            <MakeMatrix matrix={LD1Matrix} squ={squNum} />
             <img src={formula} style={{ width: "100%" }} />
           </p>
 
           <p>
             3, 计算 Bj cj <br />
-            Bj = -D^-1 (L + U) =
+            Bs = -(L + D)^-1 * U =
             ---
-            <MakeMatrix matrix={DIMatrix} squ={squNum} />
+            <MakeMatrix matrix={LD1Matrix} squ={squNum} />
             *
-            <MakeMatrix matrix={LUMatrix} squ={squNum} />
+            <MakeMatrix matrix={UMatrix} squ={squNum} />
             =
-            <MakeMatrix matrix={BjMatrix} squ={squNum} /> <br />
+            <MakeMatrix matrix={BsMatrix} squ={squNum} /> <br />
 
-            cj = D^-1 * b =
-            <MakeMatrix matrix={DIMatrix} squ={squNum} />
+            cs = (L + D)^-1 * b =
+            <MakeMatrix matrix={LD1Matrix} squ={squNum} />
             *
             <MakeMatrix matrix={BMatrix} squ={squNum} />
             =
-            <MakeMatrix matrix={CjMatrix} squ={squNum} /> <br />
+            <MakeMatrix matrix={CsMatrix} squ={squNum} /> <br />
           </p>
 
           <p>
             4, 检查收敛条件 <br />
-            || Bj || {"<"} 1 则不动点 fixed point 规则适用 <br />
-            q = || Bj ||_1 = {BjNorm} <br />
+            || Bs || {"<"} 1 则不动点 fixed point 规则适用 <br />
+            q = || Bs ||_∞ = {BsNorm} <br />
             若小于一则它对于 X^(0) ∈ R^3 是收敛的 <br />
           </p>
 
@@ -202,9 +206,9 @@ export default function JacobiIteration() {
             5, 计算步数 <br />
 
             x^(0) = 0 <br />
-            x^(1) = Bjx^(0) + cj = cj = <MakeMatrix matrix={CjMatrix} squ={squNum} /> <br />
+            x^(1) = Bsx^(0) + cj = cj = <MakeMatrix matrix={CsMatrix} squ={squNum} /> <br />
 
-            x(1) - x(0) = x^(1) = cj {"=>"} || x^(1) - x(0) ||_1 = || cj ||_1 = {CjNorm} <br />
+            x(1) - x(0) = x^(1) = cs {"=>"} || x^(1) - x(0) ||_1 = || cs ||_1 = {CsNorm} <br />
             不动点规则 <br />
             <img src={err} /> <br />
 
