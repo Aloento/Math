@@ -1,4 +1,6 @@
 import { math } from "@/global";
+import { suppress } from "@/helpers";
+import luDecomposition from "@/LU";
 import { PageContainer } from "@ant-design/pro-components";
 import { Divider, InputNumber } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +15,10 @@ export default function LUDecomposition() {
 
   const [UMatrix, setUMatrix] = useState<number[][]>([]);
   const [LMatrix, setLMatrix] = useState<number[][]>([]);
+  const [ResMatrix, setResMatrix] = useState<{
+    lower: number[][];
+    upper: number[][];
+  }>({} as any);
 
   useEffect(() => {
     const lnums: number[] = [];
@@ -54,6 +60,7 @@ export default function LUDecomposition() {
 
     setUMatrix(uMatrix);
 
+    setResMatrix(luDecomposition(rawMatrix, squNum));
   }, [rawMatrix]);
 
   function MakeInputMatrix() {
@@ -221,6 +228,69 @@ export default function LUDecomposition() {
     </table>
   }
 
+  function MakeResLMatrix() {
+    const refResLMatrix = useRef<HTMLTableElement>(null);
+
+    useEffect(() => {
+      refResLMatrix.current?.setAttribute("border", "1");
+    }, [refResLMatrix]);
+
+    const matrix: JSX.Element[] = [];
+
+    for (let row = 0; row < squNum; row++) {
+      const rowData: JSX.Element[] = [];
+
+      for (let col = 0; col < squNum; col++) {
+        rowData.push(
+          <td key={`${row}-${col}`}>
+            {math.format(math.fraction(ResMatrix?.lower?.at(row)?.at(col) ?? null!))}
+          </td>
+        );
+      }
+
+      matrix.push(<tr key={row}>{rowData}</tr>);
+    }
+
+    return <table ref={refResLMatrix}>
+      {matrix}
+    </table>
+  }
+
+  function MakeResUMatrix() {
+    const refResUMatrix = useRef<HTMLTableElement>(null);
+
+    useEffect(() => {
+      refResUMatrix.current?.setAttribute("border", "1");
+    }, [refResUMatrix]);
+
+    const matrix: JSX.Element[] = [];
+
+    for (let row = 0; row < squNum; row++) {
+      const rowData: JSX.Element[] = [];
+
+      for (let col = 0; col < squNum; col++) {
+        rowData.push(
+          <td key={`${row}-${col}`}>
+            {function () {
+              const n = ResMatrix?.upper?.at(row)?.at(col) ?? null!;
+              if (n % 1 === 0) {
+                return n;
+              }
+
+              return math.format(math.fraction(n));
+            }()}
+          </td>
+        );
+      }
+
+      matrix.push(<tr key={row}>{rowData}</tr>);
+    }
+
+    return <table ref={refResUMatrix}>
+      {matrix}
+    </table>
+  }
+
   return (
     <PageContainer breadcrumbRender={false}>
       <div style={{
@@ -264,12 +334,14 @@ export default function LUDecomposition() {
 
           <p>
             3, 解方程组<br />
+            L: <MakeResLMatrix /> <br />
+            U: <MakeResUMatrix />
           </p>
 
           <p>
             4, 计算determinanant<br />
             det L = 1<br />
-            det A = det L * det U<br />
+            det A = det L * det U = {suppress(() => math.det(ResMatrix.upper))}<br />
           </p>
         </section>
       </div>
