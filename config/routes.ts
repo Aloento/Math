@@ -8,6 +8,7 @@ export default [
       { path: "/First/2/2", name: "2.2 LU分解", component: "./First/2/2" },
       { path: "/First/7/1", name: "7.1 Jacobi解Ax=b", component: "./First/7/1" },
       { path: "/First/7/2", name: "7.2 GaussSeidel解Ax=b", component: "./First/7/2" },
+      { path: "/First/8/1", name: "8.1 二分法求接近根的序列", component: "./First/8/1" },
     ]
   },
   { component: "./404" },
