@@ -160,9 +160,9 @@ export default function MachineNumber() {
           gap: "6px",
         }}>
           M
-          <InputNumber placeholder={`${digits}`} onChange={x => setDigits(Number(x))} />
-          <InputNumber placeholder={`${bottomExp}`} onChange={x => setBottomExp(Number(x))} />
-          <InputNumber placeholder={`${topExp}`} onChange={x => setTopExp(Number(x))} />
+          <InputNumber value={`${digits}`} onChange={x => setDigits(Number(x))} />
+          <InputNumber value={`${bottomExp}`} onChange={x => setBottomExp(Number(x))} />
+          <InputNumber value={`${topExp}`} onChange={x => setTopExp(Number(x))} />
         </div>
 
         <div style={{
@@ -171,7 +171,7 @@ export default function MachineNumber() {
           gap: "6px",
         }}>
           fl
-          <Input placeholder={`${math.number(dec)}`}
+          <Input value={`${math.number(dec)}`}
             onChange={x => suppress(() => setDec(math.fraction(x.currentTarget.value)))} />
         </div>
 

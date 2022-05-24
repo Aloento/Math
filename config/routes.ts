@@ -15,7 +15,10 @@ export default [
   },
   {
     path: "/Second", name: "Second", routes: [
-      { path: "/Second/1/1", name: "2.1 多项式插值", component: "./Second/1/1" },
+      { path: "/Second/1/1", name: "1.1 多项式插值", component: "./Second/1/1" },
+      { path: "/Second/1/2", name: "1.2 Hermite插值", component: "./Second/1/2" },
+      { path: "/Second/5", name: "5 最小二乘法", component: "./Second/5" },
+      { path: "/Second/7", name: "7 近似计算误差估计", component: "./Second/7" },
     ]
   },
   { component: "./404" },

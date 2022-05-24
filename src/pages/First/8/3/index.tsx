@@ -12,7 +12,7 @@ export default function NewtonRaphson() {
   const [DerFunc, setDerFunc] = useState<MathNode>(null!);
   const [Der2Func, setDer2Func] = useState<MathNode>(null!);
 
-  const [Root, setRoot] = useState(0.12404);
+  const [Root, setRoot] = useState(0.692425);
   const [Upper, setUpper] = useState<MathNode>(null!);
   const [Lower, setLower] = useState<MathNode>(null!);
 
@@ -54,8 +54,8 @@ export default function NewtonRaphson() {
 
           <p>
             1) 存在 x^* ∈ [a, b] <br />
-            <a href={`https://www.wolframalpha.com/input?i=roots ${RawFunc}`} target="_blank" children={`先求 ${RawFunc} 的根`} /> <br />
-            <InputNumber placeholder={`${Root}`} onChange={x => setRoot(Number(x))} /> <br />
+            <a href={"https://www.wolframalpha.com/input?i=" + encodeURIComponent(`roots ${RawFunc}`)} target="_blank" children={`先求 ${RawFunc} 的根`} /> <br />
+            <InputNumber value={`${Root}`} onChange={x => setRoot(Number(x))} /> <br />
             f({Math.floor(Root)}) = {suppress(() => `${Upper}`)} = {suppress(() => Upper.evaluate())} <br />
             f({Math.ceil(Root)}) = {suppress(() => `${Lower}`)} = {suppress(() => Lower.evaluate())} <br />
 
@@ -65,8 +65,8 @@ export default function NewtonRaphson() {
           <p>
             2, 判断一二阶导符号 <br />
 
-            f'(x) = <a href={`https://www.wolframalpha.com/input?i=maximize ${math.format(DerFunc)}`} target="_blank" children={math.format(DerFunc)} /> <br />
-            f''(x) = <a href={`https://www.wolframalpha.com/input?i=maximize ${math.format(Der2Func)} ${`x ∈ [${Math.floor(Root)}, ${Math.ceil(Root)}] `}`} target="_blank" children={math.format(Der2Func)} /> 在 x ∈ [{Math.floor(Root)}, {Math.ceil(Root)}] 中 <br />
+            f'(x) = <a href={"https://www.wolframalpha.com/input?i=" + encodeURIComponent(`maximize ${math.format(DerFunc)}`)} target="_blank" children={math.format(DerFunc)} /> <br />
+            f''(x) = <a href={"https://www.wolframalpha.com/input?i=" + encodeURIComponent(`maximize ${math.format(Der2Func)} ${`x ∈ [${Math.floor(Root)}, ${Math.ceil(Root)}] `}`)} target="_blank" children={math.format(Der2Func)} /> 在 x ∈ [{Math.floor(Root)}, {Math.ceil(Root)}] 中 <br />
           </p>
 
           <img src={k3} style={{ width: "100%" }} /> <br />

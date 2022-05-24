@@ -29,7 +29,7 @@ export default function JacobiIteration() {
       for (let c = 0; c < squNum; c++) {
         row.push(
           <td key={`${r}-${c}`}>
-            <InputNumber placeholder={AMatrix.at(r)?.at(c)}
+            <InputNumber value={AMatrix.at(r)?.at(c)}
               onChange={(e) => {
                 const newMatrix = [...AMatrix];
                 newMatrix[r][c] = Number(e);
@@ -55,7 +55,7 @@ export default function JacobiIteration() {
     for (let c = 0; c < squNum; c++) {
       matrix.push(
         <tr key={c}>
-          <InputNumber placeholder={BMatrix.at(c)?.at(0)}
+          <InputNumber value={BMatrix.at(c)?.at(0)}
             onChange={(e) => {
               const newMatrix = [...BMatrix];
               newMatrix[c][0] = Number(e);
@@ -208,7 +208,7 @@ export default function JacobiIteration() {
             不动点规则 <br />
             <img src={err} /> <br />
 
-            <a href={`https://www.wolframalpha.com/input?i=${exp}`} children={exp} target={"_blank"} /> <br />
+            <a href={"https://www.wolframalpha.com/input?i=" + encodeURIComponent(`${exp}`)} children={exp} target={"_blank"} /> <br />
             Real solution 向上取整就是步数
           </p>
         </section>

@@ -29,7 +29,7 @@ export default function GaussSeidel() {
       for (let c = 0; c < squNum; c++) {
         row.push(
           <td key={`${r}-${c}`}>
-            <InputNumber placeholder={AMatrix.at(r)?.at(c)}
+            <InputNumber value={AMatrix.at(r)?.at(c)}
               onChange={(e) => {
                 const newMatrix = [...AMatrix];
                 newMatrix[r][c] = Number(e);
@@ -55,7 +55,7 @@ export default function GaussSeidel() {
     for (let c = 0; c < squNum; c++) {
       matrix.push(
         <tr key={c}>
-          <InputNumber placeholder={BMatrix.at(c)?.at(0)}
+          <InputNumber value={BMatrix.at(c)?.at(0)}
             onChange={(e) => {
               const newMatrix = [...BMatrix];
               newMatrix[c][0] = Number(e);
@@ -171,7 +171,7 @@ export default function GaussSeidel() {
 
           <p>
             2, 用Gaussian elimination 计算 L + D 的 invertate<br />
-            <a href={`https://www.wolframalpha.com/input?i=Inverse matrix ${suppress(() => math.format(LDMatrix))}`}
+            <a href={"https://www.wolframalpha.com/input?i=" + encodeURIComponent(`Inverse matrix ${suppress(() => math.format(LDMatrix))}`)}
               target="_blank" children={`Inverse matrix ${suppress(() => math.format(LDMatrix))}`} />
             <MakeMatrix matrix={LD1Matrix} squ={squNum} />
             <img src={formula} style={{ width: "100%" }} />
@@ -212,7 +212,7 @@ export default function GaussSeidel() {
             不动点规则 <br />
             <img src={err} /> <br />
 
-            <a href={`https://www.wolframalpha.com/input?i=${exp}`} children={exp} target={"_blank"} /> <br />
+            <a href={"https://www.wolframalpha.com/input?i=" + encodeURIComponent(`${exp}`)} children={exp} target={"_blank"} /> <br />
             Real solution 向上取整就是步数
           </p>
         </section>

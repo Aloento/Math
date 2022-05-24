@@ -25,8 +25,8 @@ export default function Contraction() {
       }}>
 
         <Input placeholder={`${RawFunc}`} onChange={x => setRawFunc(suppress(() => math.parse(x.target.value)))} />
-        <InputNumber placeholder={`${Inter[0]}`} onChange={x => setInter([x as number, Inter[1]])} />
-        <InputNumber placeholder={`${Inter[1]}`} onChange={x => setInter([Inter[0], x as number])} />
+        <InputNumber value={`${Inter[0]}`} onChange={x => setInter([x as number, Inter[1]])} />
+        <InputNumber value={`${Inter[1]}`} onChange={x => setInter([Inter[0], x as number])} />
 
         判断函数 {`${RawFunc}`} 是否在 {Inter[0]} 和 {Inter[1]} 之间收敛
 

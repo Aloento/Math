@@ -24,7 +24,7 @@ export default function CholeskyDecomposition() {
       for (let c = 0; c < squNum; c++) {
         row.push(
           <td key={`${r}-${c}`}>
-            <InputNumber placeholder={rawMatrix.at(r)?.at(c)}
+            <InputNumber value={rawMatrix.at(r)?.at(c)}
               onChange={(e) => {
                 const newMatrix = [...rawMatrix];
                 newMatrix[r][c] = Number(e);
