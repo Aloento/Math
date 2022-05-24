@@ -101,8 +101,8 @@ export default function BolzanoMethod() {
         gap: '12px',
       }}>
 
-        <InputNumber value={Pow} onChange={x => setPow(x)} />
-        <InputNumber value={Base} onChange={x => setBase(x)} />
+        <InputNumber placeholder={Pow} onChange={x => setPow(x)} />
+        <InputNumber placeholder={Base} onChange={x => setBase(x)} />
         <Input placeholder={suppress(() => math.format(Acc))} onChange={x => setAcc(suppress(() => math.fraction(x.target.value)))} />
 
         求一个精度为 {suppress(() => math.format(Acc))}，接近 {Pow}√{Base} 的序列

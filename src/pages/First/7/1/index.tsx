@@ -29,7 +29,7 @@ export default function JacobiIteration() {
       for (let c = 0; c < squNum; c++) {
         row.push(
           <td key={`${r}-${c}`}>
-            <InputNumber value={AMatrix.at(r)?.at(c)}
+            <InputNumber placeholder={AMatrix.at(r)?.at(c)}
               onChange={(e) => {
                 const newMatrix = [...AMatrix];
                 newMatrix[r][c] = Number(e);
@@ -55,7 +55,7 @@ export default function JacobiIteration() {
     for (let c = 0; c < squNum; c++) {
       matrix.push(
         <tr key={c}>
-          <InputNumber value={BMatrix.at(c)?.at(0)}
+          <InputNumber placeholder={BMatrix.at(c)?.at(0)}
             onChange={(e) => {
               const newMatrix = [...BMatrix];
               newMatrix[c][0] = Number(e);
@@ -145,7 +145,7 @@ export default function JacobiIteration() {
         flexDirection: 'column',
         gap: '12px',
       }}>
-        <InputNumber value={squNum} onChange={x => {
+        <InputNumber placeholder={squNum} onChange={x => {
           setAMatrix(math.matrix(AMatrix).resize([x, x]).toArray() as number[][]);
           setBMatrix(math.matrix(BMatrix).resize([x, 1]).toArray() as number[][]);
           return setSquNum(Number(x));

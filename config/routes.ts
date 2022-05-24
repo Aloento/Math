@@ -9,6 +9,7 @@ export default [
       { path: "/First/7/1", name: "7.1 Jacobi解Ax=b", component: "./First/7/1" },
       { path: "/First/7/2", name: "7.2 GaussSeidel解Ax=b", component: "./First/7/2" },
       { path: "/First/8/1", name: "8.1 二分法求接近根的序列", component: "./First/8/1" },
+      { path: "/First/8/2", name: "8.2 函数收敛判断", component: "./First/8/2" },
     ]
   },
   { component: "./404" },
