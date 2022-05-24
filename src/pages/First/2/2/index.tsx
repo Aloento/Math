@@ -248,7 +248,7 @@ export default function LUDecomposition() {
         gap: '12px',
         flexDirection: 'column',
       }}>
-        <InputNumber placeholder={squNum} onChange={x => {
+        <InputNumber value={squNum} onChange={x => {
           setRawMatrix(math.matrix(rawMatrix).resize([x, x]).toArray() as number[][]);
           return setSquNum(Number(x));
         }} />

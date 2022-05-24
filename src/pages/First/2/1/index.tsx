@@ -210,7 +210,7 @@ export default function CholeskyDecomposition() {
           gap: "10px",
           alignItems: "center",
         }}>
-          <InputNumber placeholder={squNum} onChange={x => {
+          <InputNumber value={squNum} onChange={x => {
             setRawMatrix(math.matrix(rawMatrix).resize([x, x]).toArray() as number[][]);
             return setSquNum(Number(x));
           }} />

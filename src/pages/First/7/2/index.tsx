@@ -146,7 +146,7 @@ export default function GaussSeidel() {
         flexDirection: 'column',
         gap: '12px',
       }}>
-        <InputNumber placeholder={squNum} onChange={x => {
+        <InputNumber value={squNum} onChange={x => {
           setAMatrix(math.matrix(AMatrix).resize([x, x]).toArray() as number[][]);
           setBMatrix(math.matrix(BMatrix).resize([x, 1]).toArray() as number[][]);
           return setSquNum(Number(x));

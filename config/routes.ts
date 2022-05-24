@@ -13,5 +13,10 @@ export default [
       { path: "/First/8/3", name: "8.3 牛顿法解方程", component: "./First/8/3" },
     ]
   },
+  {
+    path: "/Second", name: "Second", routes: [
+      { path: "/Second/1/1", name: "2.1 多项式插值", component: "./Second/1/1" },
+    ]
+  },
   { component: "./404" },
 ] as MenuDataItem[];

@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { fractionMatrix } from "./helpers";
 
-export default function MakeMatrix({ matrix, squ }: { matrix: any[][], squ: number }) {
+export default function MakeMatrix({ matrix, squ, raw }: { matrix: any[][], squ: number, raw?: boolean }) {
   const refMatrix = useRef<HTMLTableElement>(null);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function MakeMatrix({ matrix, squ }: { matrix: any[][], squ: numb
     for (let col = 0; col < squ; col++) {
       rowData.push(
         <td key={`${row}-${col}`}>
-          {fractionMatrix(matrix)?.at(row)?.at(col)}
+          {raw ? matrix?.at(row)?.at(col) : fractionMatrix(matrix)?.at(row)?.at(col)}
         </td>
       );
     }
